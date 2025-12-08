@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Registro</title></head>
+<body>
+  <h2>Registro</h2>
+
+  <form id="formRegistro">
+    <label>Usuario:</label><br>
+    <input id="usuario" name="usuario" required><br>
+    <label>Contraseña:</label><br>
+    <input id="password" name="password" type="password" required><br><br>
+    <button type="submit">Crear cuenta</button>
+  </form>
+
+  <p id="mensaje" style="color:green"></p>
+
+<script>
+document.getElementById("formRegistro").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const usuario = document.getElementById("usuario").value.trim();
+  const password = document.getElementById("password").value;
+
+  const out = document.getElementById("mensaje");
+  out.style.color = "black";
+  out.textContent = "Procesando...";
+
+  try {
+    const res = await fetch("/registro", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ usuario, password })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      out.style.color = "green";
+      out.textContent = data.msg;
+      document.getElementById("formRegistro").reset();
+    } else {
+      out.style.color = "red";
+      out.textContent = data.msg || "Error";
+    }
+  } catch (err) {
+    out.style.color = "red";
+    out.textContent = "Error en el servidor";
+    console.error(err);
+  }
+});
+</script>
+</body>
+</html>

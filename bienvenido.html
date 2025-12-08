@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Bienvenido - VLSM Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: "Times New Roman", serif;
+      background: linear-gradient(120deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee);
+      background-size: 400% 400%;
+      animation: gradient 12s ease infinite;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    #titulo {
+      font-size: 40px;
+      margin-bottom: 20px;
+      color: black;
+      text-shadow: 1px 1px 3px white;
+    }
+
+    .user-info {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 30px;
+      background: rgba(255,255,255,0.8);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+
+    button {
+      font-family: "Times New Roman", serif;
+      font-size: 20px;
+      padding: 15px 30px;
+      margin: 15px;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      background: white;
+      transition: 0.3s;
+      width: 260px;
+    }
+
+    button:hover {
+      background: purple;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .btn-logout {
+      background: #f44336;
+      color: white;
+      width: 200px;
+      margin-top: 40px;
+    }
+
+    .btn-logout:hover {
+      background: #d32f2f;
+    }
+
+    .loading {
+      text-align: center;
+      color: white;
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="loadingScreen" class="loading">
+    <h2>Cargando...</h2>
+  </div>
+
+  <div id="mainContent" style="display: none;">
+    <h2 id="titulo">¡Bienvenido!</h2>
+    
+    <div class="user-info">
+      👤 Usuario: <strong><span id="userName">Cargando...</span></strong>
+    </div>
+
+    <button onclick="window.location.href='vlsm.html'">
+      🔢 Calcular VLSM
+    </button>
+
+    <button onclick="window.location.href='subredes.html'">
+      🌐 Calcular Direcciones de Red
+    </button>
+
+    <button class="btn-logout" onclick="logout()">
+      🚪 Cerrar Sesión
+    </button>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const user = verificarSesion();
+      
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      document.getElementById('userName').textContent = user.username;
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'flex';
+    });
+
+    function logout() {
+      if (confirm('¿Cerrar sesión?')) {
+        logoutUsuario();
+        window.location.href = 'index.html';
+      }
+    }
+  </script>
+
+</body>
+</html>

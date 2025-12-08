@@ -1,0 +1,400 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Calculadora de Subredes</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Times New Roman", serif;
+      background: linear-gradient(120deg, #ff9a9e, #fad0c4, #a6c1ee, #96e6a1);
+      background-size: 400% 400%;
+      animation: fondo 12s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 32px;
+      box-sizing: border-box;
+    }
+    @keyframes fondo {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .wrap {
+      width: 1100px;
+      max-width: 98%;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .main-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      position: relative;
+    }
+
+    .btn-back {
+      position: absolute;
+      top: 22px;
+      right: 22px;
+      padding: 8px 16px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-back:hover {
+      background: #d32f2f;
+    }
+
+    h1 { margin: 0 0 6px 0; font-size: 22px; color:#1b2b55; }
+    .subtitle { color:#456; margin: 6px 0 18px 0; font-size:14px; }
+
+    label { font-weight: bold; font-size:15px; color:#123; }
+    input[type="text"], input[type="number"] {
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #bdbdbd;
+      font-size:15px;
+      width: 220px;
+      box-sizing: border-box;
+    }
+    .btn {
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: linear-gradient(90deg,#6a11cb,#2575fc);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn:active { transform: translateY(1px); }
+
+    .section-title {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-top:18px;
+      margin-bottom:12px;
+      color:#0c2a67;
+      font-weight:bold;
+      font-size:16px;
+    }
+    .section-title .line { width:6px; height:28px; background:#1b3fa5; border-radius:3px; }
+
+    .bits-row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:10px; }
+    .bit {
+      width:26px; height:26px; display:inline-flex; align-items:center; justify-content:center;
+      border-radius:6px; border:1px solid #cfd8e3; background:#f7f9fc;
+      font-weight:bold;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+    .bit.one { color:#0b3d91; }
+    .bit.zero { color:#b71c1c; }
+    .octet-space { width:12px; display:inline-block; }
+
+    .result-line { margin:6px 0; font-size:15px; color:#123; }
+    .result-value { font-weight:bold; color:#0b3d91; margin-left:8px; }
+
+    .side-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.16);
+      position: sticky;
+      top: 32px;
+      height: fit-content;
+    }
+    .side-card h3 { margin: 0 0 8px 0; color:#1b2b55; }
+    .side-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed #eee; font-size:14px; }
+    .side-row:last-child { border-bottom:none; }
+    .pill { background:#f0f4ff; border-radius:8px; padding:6px 10px; font-weight:bold; color:#123; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); }
+
+    @media (max-width:900px){
+      .wrap { grid-template-columns: 1fr; }
+      .side-card { position: relative; top: 0; margin-top:24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+
+    <div class="main-card">
+      <button class="btn-back" onclick="window.location.href='bienvenido.html'">← Volver</button>
+      
+      <h1>Calculadora de Subredes</h1>
+      <div class="subtitle">Ingresa la IP y el prefijo (CIDR). Los resultados se generan automáticamente.</div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <div>
+          <label>Dirección IP</label><br>
+          <input id="ipInput" type="text" placeholder="Ej: 192.168.1.0">
+        </div>
+
+        <div>
+          <label>CIDR (prefijo)</label><br>
+          <input id="cidrInput" type="number" min="0" max="32" placeholder="Ej: 24" style="width:100px">
+        </div>
+
+        <div style="align-self:end;">
+          <button class="btn" id="calcBtn">Calcular</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="result-line">Notación CIDR: <span id="outCIDR" class="result-value">/--</span></div>
+        <div class="result-line">Máscara de subred: <span id="outMaskDec" class="result-value">--</span></div>
+        <div class="result-line">Máscara Wildcard: <span id="outWildcard" class="result-value">--</span></div>
+      </div>
+
+      <div class="section-title"><div class="line"></div> Binario en cuadros</div>
+
+      <div style="margin-bottom:8px; font-weight:bold;">IP:</div>
+      <div id="ipBits" class="bits-row"></div>
+
+      <div style="margin-bottom:8px; font-weight:bold;">Máscara:</div>
+      <div id="maskBits" class="bits-row"></div>
+
+      <div class="section-title"><div class="line"></div> Resultados de la red</div>
+
+      <div class="result-line">Dirección de red (decimal): <span id="outNetwork" class="result-value">--</span></div>
+      <div class="result-line">Dirección de red (binario): <span id="outNetworkBin" class="result-value">--</span></div>
+
+      <div class="result-line">Dirección de broadcast (decimal): <span id="outBroadcast" class="result-value">--</span></div>
+      <div class="result-line">Dirección de broadcast (binario): <span id="outBroadcastBin" class="result-value">--</span></div>
+
+      <div class="result-line">Rango de hosts utilizables: <span id="outHostRange" class="result-value">--</span></div>
+      <div class="result-line">Número total de hosts: <span id="outTotalHosts" class="result-value">--</span></div>
+      <div class="result-line">Número de hosts utilizables: <span id="outUsableHosts" class="result-value">--</span></div>
+
+      <div class="section-title"><div class="line"></div> Otros</div>
+      <div class="result-line">Máscara de subred (binario): <span id="outBinaryMask" class="result-value">--</span></div>
+      <div class="result-line">Clase de IP: <span id="outClass" class="result-value">--</span></div>
+      <div class="result-line">Tipo de IP: <span id="outType" class="result-value">--</span></div>
+
+    </div>
+
+    <div class="side-card">
+      <h3>Cálculos adicionales</h3>
+
+      <div class="side-row">
+        <div>Clase</div>
+        <div class="pill" id="sideClass">-</div>
+      </div>
+
+      <div class="side-row">
+        <div>Tipo</div>
+        <div class="pill" id="sideType">-</div>
+      </div>
+
+      <div class="side-row">
+        <div>Nº Bits – SF (bits prestados)</div>
+        <div class="pill" id="sideBitsSF">-</div>
+      </div>
+
+      <div class="side-row">
+        <div>Nº Subredes</div>
+        <div class="pill" id="sideNumSubnets">-</div>
+      </div>
+
+      <div class="side-row">
+        <div>Nº Bits – Host</div>
+        <div class="pill" id="sideBitsHost">-</div>
+      </div>
+
+      <div class="side-row">
+        <div>Nº Hosts × Subred</div>
+        <div class="pill" id="sideHostsPerSubnet">-</div>
+      </div>
+
+      <div style="margin-top:12px; font-size:13px; color:#444;">
+        <em>Nota:</em> Para /31 y /32 los hosts utilizables estándar son especiales (ver RFCs).
+      </div>
+    </div>
+
+  </div>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+
+<script>
+// Proteger la página
+window.addEventListener('DOMContentLoaded', async () => {
+  await protegerPagina();
+});
+
+function ipToInt(parts){
+  return (parts[0] * 16777216) + (parts[1] * 65536) + (parts[2] * 256) + parts[3];
+}
+function intToIp(num){
+  return [ 
+    Math.floor(num / 16777216) % 256,
+    Math.floor(num / 65536) % 256,
+    Math.floor(num / 256) % 256,
+    num % 256
+  ].join('.');
+}
+function maskFromCidr(cidr){
+  let mask = [];
+  for(let i = 0; i < 4; i++){
+    let n = Math.min(cidr, 8);
+    mask.push(256 - Math.pow(2, 8 - n));
+    cidr -= n;
+  }
+  return mask;
+}
+function bitsString32(num){
+  let binary = '';
+  for(let i = 31; i >= 0; i--){
+    binary += (num >> i) & 1;
+  }
+  return binary;
+}
+function wildcardFromMask(maskArr){
+  return maskArr.map(o=>255-o).join('.');
+}
+function detectClass(firstOctet){
+  if (firstOctet >=1 && firstOctet<=126) return 'A';
+  if (firstOctet === 127) return 'Loopback';
+  if (firstOctet >=128 && firstOctet<=191) return 'B';
+  if (firstOctet >=192 && firstOctet<=223) return 'C';
+  if (firstOctet >=224 && firstOctet<=239) return 'D (Multicast)';
+  if (firstOctet >=240 && firstOctet<=254) return 'E (Reservada)';
+  return 'Reservada';
+}
+function detectType(parts){
+  const [a,b] = parts;
+  if(a===127) return 'Loopback';
+  if(a===10) return 'Privada';
+  if(a===172 && b>=16 && b<=31) return 'Privada';
+  if(a===192 && b===168) return 'Privada';
+  if(a>=224 && a<=239) return 'Multicast';
+  if(a===0) return 'Reservada';
+  return 'Pública';
+}
+
+function clearBits(container){
+  container.innerHTML = '';
+}
+function renderBits(container, bitString){
+  for(let i=0;i<32;i++){
+    if(i>0 && i%8===0){
+      const spacer = document.createElement('div');
+      spacer.className='octet-space';
+      container.appendChild(spacer);
+    }
+    const span = document.createElement('div');
+    const bit = bitString.charAt(i);
+    span.className = 'bit ' + (bit==='1' ? 'one' : 'zero');
+    span.textContent = bit;
+    container.appendChild(span);
+  }
+}
+
+document.getElementById('calcBtn').addEventListener('click', () => {
+  const ipRaw = document.getElementById('ipInput').value.trim();
+  const cidrRaw = document.getElementById('cidrInput').value.trim();
+
+  if(!ipRaw || !cidrRaw){
+    alert('Por favor ingresa IP y CIDR');
+    return;
+  }
+
+  const ipParts = ipRaw.split('.').map(s=>parseInt(s,10));
+  const cidr = parseInt(cidrRaw,10);
+
+  if(ipParts.length !== 4 || ipParts.some(n => isNaN(n) || n<0 || n>255) || isNaN(cidr) || cidr<0 || cidr>32){
+    alert('IP o CIDR inválidos. Ejemplo: IP=192.168.1.0  CIDR=24');
+    return;
+  }
+
+  const ipNum = ipToInt(ipParts);
+  const maskArr = maskFromCidr(cidr);
+  const maskNum = ipToInt(maskArr);
+  const wildcard = wildcardFromMask(maskArr);
+  const networkNum = (ipNum & maskNum) >>> 0;
+  const broadcastNum = (networkNum | (~maskNum >>> 0)) >>> 0;
+
+  const hostBits = 32 - cidr;
+  const totalHosts = Math.pow(2, hostBits);
+
+  let usableHosts, firstHost, lastHost;
+
+  if(cidr === 31){
+    usableHosts = 2;
+    firstHost = intToIp(networkNum);
+    lastHost = intToIp(broadcastNum);
+  } else if(cidr === 32){
+    usableHosts = 1;
+    firstHost = lastHost = intToIp(networkNum);
+  } else if(hostBits > 1){
+    usableHosts = totalHosts - 2;
+    firstHost = intToIp(networkNum + 1);
+    lastHost = intToIp(broadcastNum - 1);
+  } else {
+    usableHosts = 0;
+    firstHost = lastHost = 'N/A';
+  }
+
+  const ipBits = bitsString32(ipNum);
+  const maskBits = bitsString32(maskNum);
+  const networkBits = bitsString32(networkNum);
+  const broadcastBits = bitsString32(broadcastNum);
+
+  const ipClass = detectClass(ipParts[0]);
+  const ipType = detectType(ipParts);
+
+  let defaultMask;
+  if(ipClass==='A') defaultMask=8;
+  else if(ipClass==='B') defaultMask=16;
+  else if(ipClass==='C') defaultMask=24;
+  else defaultMask=cidr;
+
+  const bitsBorrowed = (ipClass==='A'||ipClass==='B'||ipClass==='C') ? Math.max(0,cidr-defaultMask) : 0;
+  const numSubnets = bitsBorrowed>0 ? Math.pow(2,bitsBorrowed) : 1;
+
+  document.getElementById('outCIDR').textContent = '/' + cidr;
+  document.getElementById('outMaskDec').textContent = maskArr.join('.');
+  document.getElementById('outWildcard').textContent = wildcard;
+
+  clearBits(document.getElementById('ipBits'));
+  clearBits(document.getElementById('maskBits'));
+  renderBits(document.getElementById('ipBits'), ipBits);
+  renderBits(document.getElementById('maskBits'), maskBits);
+
+  document.getElementById('outNetwork').textContent = intToIp(networkNum);
+  document.getElementById('outNetworkBin').textContent = networkBits.match(/.{1,8}/g).join(' ');
+  document.getElementById('outBroadcast').textContent = intToIp(broadcastNum);
+  document.getElementById('outBroadcastBin').textContent = broadcastBits.match(/.{1,8}/g).join(' ');
+  document.getElementById('outHostRange').textContent = (firstHost==='N/A' ? 'N/A' : firstHost + ' - ' + lastHost);
+  document.getElementById('outTotalHosts').textContent = totalHosts.toLocaleString();
+  document.getElementById('outUsableHosts').textContent = usableHosts.toLocaleString();
+
+  document.getElementById('outBinaryMask').textContent = maskBits.match(/.{1,8}/g).join(' ');
+  document.getElementById('outClass').textContent = ipClass;
+  document.getElementById('outType').textContent = ipType;
+
+  document.getElementById('sideClass').textContent = ipClass;
+  document.getElementById('sideType').textContent = ipType;
+  document.getElementById('sideBitsSF').textContent = bitsBorrowed;
+  document.getElementById('sideNumSubnets').textContent = numSubnets.toLocaleString();
+  document.getElementById('sideBitsHost').textContent = hostBits;
+  document.getElementById('sideHostsPerSubnet').textContent = totalHosts.toLocaleString();
+});
+</script>
+
+</body>
+</html>
