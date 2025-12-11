@@ -18,9 +18,7 @@
       background-size: 400% 400%;
       animation: gradient 12s ease infinite;
       position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      overflow: hidden;
     }
 
     @keyframes gradient {
@@ -31,116 +29,153 @@
 
     /* Botón de cerrar sesión en la esquina superior derecha */
     .btn-logout {
-      position: absolute;
-      top: 20px;
-      right: 20px;
+      position: fixed;
+      top: 30px;
+      right: 30px;
       font-family: "Times New Roman", serif;
-      font-size: 16px;
-      padding: 12px 24px;
+      font-size: 18px;
+      padding: 12px 28px;
       border: none;
       cursor: pointer;
-      border-radius: 10px;
+      border-radius: 12px;
       background: #f44336;
       color: white;
       transition: all 0.3s;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
       font-weight: bold;
+      z-index: 1000;
     }
 
     .btn-logout:hover {
       background: #d32f2f;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(244, 67, 54, 0.6);
     }
 
-    /* Contenedor central */
+    /* Contenedor central completo */
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100%;
+    }
+
     .container {
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 30px;
+      gap: 40px;
     }
 
     #titulo {
-      font-size: 48px;
-      color: black;
-      text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
-      margin-bottom: 10px;
+      font-size: 56px;
+      color: #1a1a1a;
+      text-shadow: 2px 2px 6px rgba(255,255,255,0.9);
+      margin-bottom: 0;
+      font-weight: bold;
     }
 
     .user-info {
-      font-size: 20px;
-      color: #333;
-      background: rgba(255,255,255,0.9);
-      padding: 15px 35px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      margin-bottom: 20px;
+      font-size: 22px;
+      color: #2c3e50;
+      background: rgba(255,255,255,0.95);
+      padding: 18px 45px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      margin-bottom: 10px;
+      border: 2px solid rgba(255,255,255,0.8);
     }
 
     .user-info strong {
       color: #667eea;
-      font-size: 22px;
+      font-size: 24px;
+      font-weight: bold;
     }
 
     /* Contenedor de botones de calculadoras */
     .button-group {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 25px;
       align-items: center;
     }
 
     .calc-button {
       font-family: "Times New Roman", serif;
-      font-size: 22px;
-      padding: 18px 40px;
+      font-size: 24px;
+      padding: 22px 50px;
       border: none;
       cursor: pointer;
-      border-radius: 15px;
+      border-radius: 18px;
       background: white;
       transition: all 0.3s;
-      width: 320px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      width: 380px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
       font-weight: bold;
+      color: #2c3e50;
+      border: 3px solid transparent;
     }
 
     .calc-button:hover {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+      border: 3px solid rgba(255,255,255,0.3);
+    }
+
+    .calc-button:active {
+      transform: translateY(-4px) scale(1.01);
     }
 
     .loading {
       text-align: center;
       color: white;
-      font-size: 28px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      font-size: 32px;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
     /* Responsive */
     @media (max-width: 600px) {
       #titulo {
-        font-size: 36px;
+        font-size: 40px;
       }
 
       .calc-button {
-        width: 280px;
+        width: 300px;
+        font-size: 20px;
+        padding: 18px 35px;
+      }
+
+      .btn-logout {
+        top: 15px;
+        right: 15px;
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+
+      .user-info {
         font-size: 18px;
         padding: 15px 30px;
       }
 
-      .btn-logout {
-        top: 10px;
-        right: 10px;
-        padding: 10px 20px;
-        font-size: 14px;
+      .user-info strong {
+        font-size: 20px;
       }
 
-      .user-info {
-        font-size: 16px;
+      .container {
+        gap: 30px;
+      }
+
+      .button-group {
+        gap: 20px;
       }
     }
   </style>
@@ -158,24 +193,26 @@
   </div>
 
   <!-- Contenido principal -->
-  <div id="mainContent" class="container" style="display: none;">
-    
-    <h2 id="titulo">¡Bienvenido!</h2>
-    
-    <div class="user-info">
-      👤 Usuario: <strong><span id="userName">Cargando...</span></strong>
+  <div id="mainContent" class="wrapper" style="display: none;">
+    <div class="container">
+      
+      <h2 id="titulo">¡Bienvenido!</h2>
+      
+      <div class="user-info">
+        👤 Usuario: <strong><span id="userName">Cargando...</span></strong>
+      </div>
+
+      <div class="button-group">
+        <button class="calc-button" onclick="window.location.href='vlsm.html'">
+          🔢 Calcular VLSM
+        </button>
+
+        <button class="calc-button" onclick="window.location.href='subredes.html'">
+          🌐 Calcular Direcciones de Red
+        </button>
+      </div>
+
     </div>
-
-    <div class="button-group">
-      <button class="calc-button" onclick="window.location.href='vlsm.html'">
-        🔢 Calcular VLSM
-      </button>
-
-      <button class="calc-button" onclick="window.location.href='subredes.html'">
-        🌐 Calcular Direcciones de Red
-      </button>
-    </div>
-
   </div>
 
   <!-- Supabase SDK -->
