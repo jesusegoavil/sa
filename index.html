@@ -4,133 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - VLSM Calculator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 420px;
-            width: 100%;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px 16px;
-            margin-bottom: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .link {
-            text-align: center;
-            margin-top: 20px;
-            color: #667eea;
-            cursor: pointer;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .link:hover {
-            color: #764ba2;
-            text-decoration: underline;
-        }
-
-        .mensaje {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            text-align: center;
-            font-weight: 600;
-            display: none;
-        }
-
-        .mensaje.error {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #ef5350;
-        }
-
-        .mensaje.exito {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #66bb6a;
-        }
-
-        .mensaje.info {
-            background: #e3f2fd;
-            color: #1565c0;
-            border: 1px solid #42a5f5;
-        }
-    </style>
+    <!-- ✅ USAR TU estilo.css -->
+    <link rel="stylesheet" href="estilo.css">
 </head>
-<body>
+<body class="auth-body">
 
     <div class="card">
         <h2>🔐 Iniciar Sesión</h2>
@@ -141,18 +18,15 @@
         <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password">
         <button onclick="login()">Ingresar</button>
         
-        <!-- ✅ ESTE ES EL CAMBIO IMPORTANTE -->
         <p class="link" onclick="window.location.href='registro.html'">
             ¿No tienes cuenta? Registrar
         </p>
     </div>
 
-    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     
     <script>
-        // Verificar si ya hay sesión
         window.addEventListener('DOMContentLoaded', () => {
             const user = verificarSesion();
             if (user) {
