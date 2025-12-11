@@ -132,24 +132,19 @@
 </head>
 <body>
 
-    <!-- LOGIN -->
-    <div class="card" id="loginSection">
+    <div class="card">
         <h2>🔐 Iniciar Sesión</h2>
-        <div id="mensajeLogin" class="mensaje"></div>
+        
+        <div id="mensaje" class="mensaje"></div>
+        
         <input type="text" id="loginUser" placeholder="Usuario" autocomplete="username">
         <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password">
         <button onclick="login()">Ingresar</button>
-        <p class="link" onclick="showRegister()">¿No tienes cuenta? Registrar</p>
-    </div>
-
-    <!-- REGISTRO -->
-    <div class="card" id="registerSection" style="display:none;">
-        <h2>📝 Registrar Cuenta</h2>
-        <div id="mensajeRegister" class="mensaje"></div>
-        <input type="text" id="regUser" placeholder="Nuevo Usuario" autocomplete="username">
-        <input type="password" id="regPass" placeholder="Nueva Contraseña (min. 6 caracteres)" autocomplete="new-password">
-        <button onclick="register()">Crear Cuenta</button>
-        <p class="link" onclick="showLogin()">¿Ya tienes cuenta? Iniciar Sesión</p>
+        
+        <!-- ✅ ESTE ES EL CAMBIO IMPORTANTE -->
+        <p class="link" onclick="window.location.href='registro.html'">
+            ¿No tienes cuenta? Registrar
+        </p>
     </div>
 
     <!-- Supabase SDK -->
@@ -165,54 +160,10 @@
             }
         });
 
-        function showRegister() {
-            document.getElementById("loginSection").style.display = "none";
-            document.getElementById("registerSection").style.display = "block";
-            limpiarMensajes();
-        }
-
-        function showLogin() {
-            document.getElementById("registerSection").style.display = "none";
-            document.getElementById("loginSection").style.display = "block";
-            limpiarMensajes();
-        }
-
-        function limpiarMensajes() {
-            document.getElementById("mensajeLogin").style.display = "none";
-            document.getElementById("mensajeRegister").style.display = "none";
-        }
-
-        async function register() {
-            const user = document.getElementById("regUser").value.trim();
-            const pass = document.getElementById("regPass").value;
-            const mensaje = document.getElementById("mensajeRegister");
-
-            if (!user || !pass) {
-                mostrarMensaje(mensaje, "Complete todos los campos", "error");
-                return;
-            }
-
-            if (pass.length < 6) {
-                mostrarMensaje(mensaje, "La contraseña debe tener al menos 6 caracteres", "error");
-                return;
-            }
-
-            mostrarMensaje(mensaje, "Registrando usuario...", "info");
-
-            const resultado = await registrarUsuario(user, pass);
-
-            if (resultado.ok) {
-                mostrarMensaje(mensaje, "✅ Registro exitoso! Ahora inicia sesión", "exito");
-                setTimeout(() => showLogin(), 2000);
-            } else {
-                mostrarMensaje(mensaje, resultado.msg, "error");
-            }
-        }
-
         async function login() {
             const user = document.getElementById("loginUser").value.trim();
             const pass = document.getElementById("loginPass").value;
-            const mensaje = document.getElementById("mensajeLogin");
+            const mensaje = document.getElementById("mensaje");
 
             if (!user || !pass) {
                 mostrarMensaje(mensaje, "Complete todos los campos", "error");
@@ -241,10 +192,6 @@
 
         document.getElementById("loginPass").addEventListener("keypress", (e) => {
             if (e.key === "Enter") login();
-        });
-
-        document.getElementById("regPass").addEventListener("keypress", (e) => {
-            if (e.key === "Enter") register();
         });
     </script>
 
