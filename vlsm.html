@@ -6,41 +6,110 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* === CSS ORIGINAL (SIN CAMBIOS) === */
-*{margin:0;padding:0;box-sizing:border-box}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
 body{
-font-family:"Times New Roman",serif;
-background:linear-gradient(135deg,#ff9a9e,#fad0c4,#a18cd1,#fbc2eb,#96e6a1);
-background-size:500% 500%;
-animation:fondoAnimado 12s ease infinite;
-padding:20px;
-min-height:100vh
+    font-family:"Times New Roman", serif;
+    background:linear-gradient(135deg,#ff9a9e,#fad0c4,#a18cd1,#fbc2eb,#96e6a1);
+    background-size:500% 500%;
+    animation:fondoAnimado 12s ease infinite;
+    padding:20px;
+    min-height:100vh;
 }
+
 @keyframes fondoAnimado{
-0%{background-position:0% 50%}
-50%{background-position:100% 50%}
-100%{background-position:0% 50%}
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }
-.container{max-width:1200px;margin:0 auto}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
 .header{
-display:flex;justify-content:space-between;align-items:center;
-background:white;padding:20px;border-radius:15px;
-margin-bottom:20px;box-shadow:0 8px 30px rgba(0,0,0,.2)
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 8px 30px rgba(0,0,0,.2);
 }
+
 .card{
-background:white;padding:25px;margin-bottom:20px;border-radius:15px;
-box-shadow:0 8px 30px rgba(0,0,0,.2)
+    background:white;
+    padding:25px;
+    margin-bottom:20px;
+    border-radius:15px;
+    box-shadow:0 8px 30px rgba(0,0,0,.2);
 }
+
+input{
+    width:100%;
+    padding:10px;
+    margin-bottom:12px;
+    border-radius:10px;
+    border:1px solid #bbb;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#6a11cb,#2575fc);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button.cerrar{
+    width:auto;
+    background:#d32f2f;
+    padding:8px 15px;
+}
+
 .input-group{
-display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:12px;
 }
+
 .subredes-container{
-display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-gap:12px;margin:20px 0
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:12px;
 }
-.subred-input-group label{font-weight:bold}
-table{width:100%;border-collapse:collapse;margin-top:20px}
-th,td{border:2px solid #333;padding:10px;text-align:center;font-weight:bold}
+
+.subred-input-group label{
+    font-weight:bold;
+    margin-bottom:5px;
+    display:block;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th,td{
+    border:2px solid #333;
+    padding:10px;
+    text-align:center;
+    font-weight:bold;
+}
+
+th{
+    background:#ddd;
+}
 </style>
 </head>
 
@@ -49,41 +118,40 @@ th,td{border:2px solid #333;padding:10px;text-align:center;font-weight:bold}
 <div class="container">
 
 <div class="header">
-<h2>Calculadora VLSM</h2>
-<button onclick="volverInicio()">← Volver</button>
+    <h2>Calculadora VLSM</h2>
+    <button class="cerrar" onclick="volverInicio()">← Volver</button>
 </div>
 
 <div class="card">
-<div class="input-group">
-<input type="text" id="ipBase" placeholder="IP base (192.168.1.0)">
-<input type="number" id="prefijoBase" placeholder="Prefijo (24)">
-<input type="number" id="numSubredes" placeholder="Subredes">
-</div>
-<button onclick="crearInputs()">Crear Campos</button>
+    <div class="input-group">
+        <input type="text" id="ipBase" placeholder="IP base (Ej: 192.168.1.0)">
+        <input type="number" id="prefijoBase" placeholder="Prefijo (Ej: 24)" min="0" max="32">
+        <input type="number" id="numSubredes" placeholder="Subredes" min="1" max="20">
+    </div>
+    <button onclick="crearInputs()">Crear campos</button>
 </div>
 
 <div id="subredesContainer" class="subredes-container"></div>
 
-<div class="card" id="btnCalcularCard" style="display:none">
-<button onclick="calcularVLSM()">Calcular VLSM</button>
+<div class="card" id="btnCalcularCard" style="display:none;">
+    <button onclick="calcularVLSM()">Calcular VLSM</button>
 </div>
 
-<div class="card" id="resultadosCard" style="display:none">
+<div class="card" id="resultadosCard" style="display:none;">
 <h3>Resultados</h3>
 
 <table id="tablaVLSM">
 <thead>
 <tr>
-<th>SR</th>
-<th>Hosts necesarios</th>
-<th>Hosts encontrados</th>
-<th>Hosts disponibles</th>
-<th>Prefijo</th>
-<th>Red</th>
-<th>Máscara</th>
-<th>Primera IP</th>
-<th>Última IP</th>
-<th>Broadcast</th>
+    <th>SR</th>
+    <th>Hosts necesarios</th>
+    <th>Hosts totales</th>
+    <th>Prefijo</th>
+    <th>Red</th>
+    <th>Máscara</th>
+    <th>Primera IP</th>
+    <th>Última IP</th>
+    <th>Broadcast</th>
 </tr>
 </thead>
 <tbody></tbody>
@@ -94,94 +162,96 @@ th,td{border:2px solid #333;padding:10px;text-align:center;font-weight:bold}
 
 <script>
 function ipToNumber(ip){
-return ip.split('.').reduce((a,o)=>a*256+parseInt(o),0);
+    return ip.split('.').reduce((acc,o)=>acc*256+parseInt(o),0);
 }
 
 function numberToIp(num){
-return [24,16,8,0].map(s=>(num>>s)&255).join('.');
-}
-
-function validarIP(ip){
-return /^(\d{1,3}\.){3}\d{1,3}$/.test(ip) &&
-ip.split('.').every(o=>o>=0 && o<=255);
+    return [24,16,8,0].map(s=>(num>>s)&255).join('.');
 }
 
 function calcularMascara(prefijo){
-let mask = 0xffffffff << (32 - prefijo);
-return [24,16,8,0].map(s => (mask >> s) & 255).join('.');
+    let mask=0xffffffff<<(32-prefijo);
+    return [24,16,8,0].map(s=>(mask>>s)&255).join('.');
 }
+
+let siguienteRed=null;
 
 function crearInputs(){
-const n=parseInt(numSubredes.value);
-if(!n || n<1) return alert("Cantidad de subredes inválida");
+    const num=parseInt(numSubredes.value);
+    const cont=document.getElementById("subredesContainer");
 
-subredesContainer.innerHTML="";
-for(let i=1;i<=n;i++){
-subredesContainer.innerHTML+=`
-<div class="subred-input-group">
-<label>Subred ${i}</label>
-<input type="number" id="hosts${i}" min="1" placeholder="Hosts">
-</div>`;
-}
-btnCalcularCard.style.display="block";
+    if(!num||num<1||num>20){
+        alert("Número de subredes inválido");
+        return;
+    }
+
+    cont.innerHTML="";
+    for(let i=1;i<=num;i++){
+        cont.innerHTML+=`
+        <div class="subred-input-group">
+            <label>Subred ${i}</label>
+            <input type="number" id="hosts${i}" placeholder="Hosts necesarios" min="1">
+        </div>`;
+    }
+
+    btnCalcularCard.style.display="block";
+    resultadosCard.style.display="none";
 }
 
 function calcularVLSM(){
-const ip=ipBase.value.trim();
-const prefijoBaseNum=parseInt(prefijoBase.value);
-const n=parseInt(numSubredes.value);
+    const ipBase=document.getElementById("ipBase").value.trim();
+    const prefijoBase=parseInt(prefijoBaseInput.value || prefijoBase.value);
+    const num=parseInt(numSubredes.value);
 
-if(!validarIP(ip)) return alert("IP base inválida");
-if(prefijoBaseNum<1 || prefijoBaseNum>30) return alert("Prefijo inválido");
+    if(!ipBase||!prefijoBase||!num){
+        alert("Complete todos los campos");
+        return;
+    }
 
-let datos=[];
-for(let i=1;i<=n;i++){
-let h=parseInt(document.getElementById(`hosts${i}`).value);
-if(!h || h<1) return alert("Hosts inválidos");
-datos.push(h);
-}
+    let datos=[];
+    for(let i=1;i<=num;i++){
+        let h=parseInt(document.getElementById(`hosts${i}`).value);
+        if(!h||h<1){
+            alert("Hosts inválidos");
+            return;
+        }
+        datos.push({hosts:h});
+    }
 
-datos.sort((a,b)=>b-a);
+    datos.sort((a,b)=>b.hosts-a.hosts);
 
-let redNum = ipToNumber(ip);
-let limiteRed = redNum + 2**(32-prefijoBaseNum);
-let tbody=document.querySelector("#tablaVLSM tbody");
-tbody.innerHTML="";
+    let tbody=document.querySelector("#tablaVLSM tbody");
+    tbody.innerHTML="";
+    siguienteRed=ipBase;
 
-datos.forEach((h,i)=>{
-let bits=Math.ceil(Math.log2(h+2));
-let total=2**bits;
-let encontrados=total-2;
-let disponibles=encontrados-h;
-let prefijo=32-bits;
+    datos.forEach((d,i)=>{
+        let bits=Math.ceil(Math.log2(d.hosts+2));
+        let totalHosts=2**bits;
+        let prefijo=32-bits;
+        let redNum=ipToNumber(siguienteRed);
 
-if(redNum + total > limiteRed){
-alert("Las subredes exceden el rango de la red base");
-throw new Error("Rango excedido");
-}
+        let fila=`
+        <tr>
+            <td>${i+1}</td>
+            <td>${d.hosts}</td>
+            <td>${totalHosts}</td>
+            <td>/${prefijo}</td>
+            <td>${siguienteRed}</td>
+            <td>${calcularMascara(prefijo)}</td>
+            <td>${numberToIp(redNum+1)}</td>
+            <td>${numberToIp(redNum+totalHosts-2)}</td>
+            <td>${numberToIp(redNum+totalHosts-1)}</td>
+        </tr>`;
 
-tbody.innerHTML+=`
-<tr>
-<td>${i+1}</td>
-<td>${h}</td>
-<td>${encontrados}</td>
-<td>${disponibles}</td>
-<td>/${prefijo}</td>
-<td>${numberToIp(redNum)}</td>
-<td>${calcularMascara(prefijo)}</td>
-<td>${numberToIp(redNum+1)}</td>
-<td>${numberToIp(redNum+total-2)}</td>
-<td>${numberToIp(redNum+total-1)}</td>
-</tr>`;
+        tbody.insertAdjacentHTML("beforeend",fila);
+        siguienteRed=numberToIp(redNum+totalHosts);
+    });
 
-redNum += total;
-});
-
-resultadosCard.style.display="block";
+    resultadosCard.style.display="block";
 }
 
 function volverInicio(){
-location.href="bienvenido.html";
+    window.location.href="bienvenido.html";
 }
 </script>
 
