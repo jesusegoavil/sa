@@ -24,13 +24,13 @@
             <input type="number" id="prefijoBase" placeholder="Prefijo (Ej: 24)" min="0" max="32">
             <input type="number" id="numSubredes" placeholder="Subredes" min="1" max="20">
         </div>
-        <button id="btnCrear">Crear campos</button>
+        <button onclick="crearInputs()">Crear campos</button>
     </div>
 
     <div id="subredesContainer" class="subredes-container"></div>
 
     <div class="card" id="btnCalcularCard" style="display:none;">
-        <button id="btnCalcular">Calcular VLSM</button>
+        <button onclick="calcularVLSM()">Calcular VLSM</button>
     </div>
 
     <div class="card" id="resultadosCard" style="display:none;">
@@ -56,11 +56,128 @@
 
 </div>
 
-<!-- JS externo (tu lógica está en otra carpeta) -->
-<script src="js/vlsm.js"></script>
-
 <script>
-function volverInicio(){
+/* =============================
+   FUNCIONES DE APOYO
+   ============================= */
+function ipToNumber(ip) {
+    return ip.split('.').reduce((acc, oct) => acc * 256 + parseInt(oct), 0);
+}
+
+function numberToIp(num) {
+    return [24, 16, 8, 0].map(shift => (num >> shift) & 255).join('.');
+}
+
+function calcularMascara(prefijo) {
+    let mask = 0xffffffff << (32 - prefijo);
+    return [24, 16, 8, 0].map(s => (mask >> s) & 255).join('.');
+}
+
+/* =============================
+   VARIABLES
+   ============================= */
+let siguienteRed = null;
+
+/* =============================
+   CREAR INPUTS
+   ============================= */
+function crearInputs() {
+    const num = parseInt(document.getElementById("numSubredes").value);
+    const container = document.getElementById("subredesContainer");
+
+    if (!num || num < 1 || num > 20) {
+        alert("Número de subredes inválido");
+        return;
+    }
+
+    container.innerHTML = "";
+
+    for (let i = 1; i <= num; i++) {
+        container.innerHTML += `
+            <div class="subred-input-group">
+                <label>Subred ${i}</label>
+                <input type="number" id="hosts${i}" placeholder="Hosts necesarios" min="1">
+            </div>
+        `;
+    }
+
+    document.getElementById("btnCalcularCard").style.display = "block";
+    document.getElementById("resultadosCard").style.display = "none";
+}
+
+/* =============================
+   CALCULAR VLSM
+   ============================= */
+function calcularVLSM() {
+    const ipBase = document.getElementById("ipBase").value.trim();
+    const prefijoBase = parseInt(document.getElementById("prefijoBase").value);
+    const num = parseInt(document.getElementById("numSubredes").value);
+
+    if (!ipBase || isNaN(prefijoBase) || isNaN(num)) {
+        alert("Complete todos los campos");
+        return;
+    }
+
+    const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
+    if (!ipRegex.test(ipBase)) {
+        alert("Formato de IP inválido");
+        return;
+    }
+
+    let subredes = [];
+    for (let i = 1; i <= num; i++) {
+        let hosts = parseInt(document.getElementById(`hosts${i}`).value);
+        if (!hosts || hosts < 1) {
+            alert(`Hosts inválidos en la subred ${i}`);
+            return;
+        }
+        subredes.push({ hosts });
+    }
+
+    /* Ordenar de mayor a menor (VLSM correcto) */
+    subredes.sort((a, b) => b.hosts - a.hosts);
+
+    let tbody = document.querySelector("#tablaVLSM tbody");
+    tbody.innerHTML = "";
+
+    siguienteRed = ipBase;
+
+    subredes.forEach((s, i) => {
+        let bitsHost = Math.ceil(Math.log2(s.hosts + 2));
+        let hostsTotales = Math.pow(2, bitsHost);
+        let prefijo = 32 - bitsHost;
+
+        let redNum = ipToNumber(siguienteRed);
+
+        let primera = numberToIp(redNum + 1);
+        let ultima = numberToIp(redNum + hostsTotales - 2);
+        let broadcast = numberToIp(redNum + hostsTotales - 1);
+        let mascara = calcularMascara(prefijo);
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${s.hosts}</td>
+                <td>${hostsTotales}</td>
+                <td>/${prefijo}</td>
+                <td>${siguienteRed}</td>
+                <td>${mascara}</td>
+                <td>${primera}</td>
+                <td>${ultima}</td>
+                <td>${broadcast}</td>
+            </tr>
+        `;
+
+        siguienteRed = numberToIp(redNum + hostsTotales);
+    });
+
+    document.getElementById("resultadosCard").style.display = "block";
+}
+
+/* =============================
+   VOLVER
+   ============================= */
+function volverInicio() {
     window.location.href = "bienvenido.html";
 }
 </script>
